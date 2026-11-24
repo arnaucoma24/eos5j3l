@@ -45,7 +45,7 @@ DockerHub: https://hub.docker.com/r/ersiliaos/eos5j3l
 Docker Architecture: AMD64
 Apptainer: https://models-sif.s3.eu-north-1.amazonaws.com/eos5j3l_v1.sif
 Model Size: 1101.0
-Environment Size: 1893.0
+Environment Size: 1910.0
 Image Size: 4044.08
 Computational Performance 1: 161.78
 Computational Performance 2: 1134.27
