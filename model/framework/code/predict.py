@@ -61,7 +61,22 @@ def _reference(smiles):
 
 
 def generate(smiles, n_outputs=N_OUTPUTS):
-    """Return n_outputs generated SMILES for one input compound, padded with empty strings."""
+    """Return n_outputs generated SMILES for one input compound, padded with empty strings.
+
+    An input the model cannot condition on gives an empty row instead of stopping the
+    batch: more than the checkpoint's 48 heavy atoms (sample.py raises ValueError),
+    atom types outside the training vocabulary such as As, Na or Sb (KeyError in
+    vocab.py), or bond-free inputs such as [Na+].[Cl-] (RuntimeError in bonds.py).
+    """
+    try:
+        return _generate(smiles, n_outputs)
+    except Exception:
+        # Silent, like the unparsable-SMILES path: the test runner reads stderr output
+        # as an execution error.
+        return [""] * n_outputs
+
+
+def _generate(smiles, n_outputs):
     reference = _reference(smiles)
     if reference is None:
         return [""] * n_outputs
