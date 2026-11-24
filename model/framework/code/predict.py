@@ -85,12 +85,16 @@ def generate(smiles, n_outputs=N_OUTPUTS):
     outside its vocabulary.
     """
     reference = _reference(smiles)
-    if reference is None or not _supported(reference):
+    if reference is None:
         return [""] * n_outputs
 
+    # Seed BEFORE the first model load: building the model draws from the global random
+    # generator, so the stored example outputs depend on seed -> load -> sample, in this order.
     # verbose=False keeps Lightning's "Seed set to ..." banner off stderr, which
     # Ersilia's runner otherwise reports as an execution error.
     L.seed_everything(SEED, workers=True, verbose=False)
+    if not _supported(reference):
+        return [""] * n_outputs
     n_sampled = n_outputs * OVERSAMPLE
     mols = sample_molecules(
         _get_model(),
